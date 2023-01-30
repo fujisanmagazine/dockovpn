@@ -1,6 +1,6 @@
-FROM alpine:3.14.1
+FROM debian:bullseye-slim
 
-LABEL maintainer="Alexander Litvinenko <array.shift@yahoo.com>"
+LABEL maintainer="Antonio Kamiya <kamiya@fujisan.co.jp>"
 
 # System settings. User normally shouldn't change these parameters
 ENV APP_NAME Dockovpn
@@ -15,11 +15,11 @@ ENV HOST_CONF_PORT 80
 
 WORKDIR ${APP_INSTALL_PATH}
 
-COPY scripts .
+COPY scripts . 
 COPY config ./config
 COPY VERSION ./config
 
-RUN apk add --no-cache openvpn easy-rsa bash netcat-openbsd zip dumb-init && \
+RUN apt-get update && apt-get -y install openvpn easy-rsa bash netcat-openbsd zip dumb-init wget && \
     ln -s /usr/share/easy-rsa/easyrsa /usr/bin/easyrsa && \
     mkdir -p ${APP_PERSIST_DIR} && \
     cd ${APP_PERSIST_DIR} && \
