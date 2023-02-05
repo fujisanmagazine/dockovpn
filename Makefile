@@ -25,6 +25,10 @@ build-local:
 	@echo "Making version of DockOvpn for testing on local machine"
 	docker build -t "${DOCKER_REPO}:local" . --no-cache
 
+build-officemx:
+	@echo "Making version of DockOvpn for testing on local machine"
+	docker build -t "${DOCKER_REPO}:local" . -e NET_ADAPTER=eth1 --no-cache
+
 build-dev:
 	@echo "Making development version of DockOvpn"
 	docker build -t "${DOCKER_REPO}:dev" . --no-cache
@@ -99,5 +103,14 @@ run-local:
 	-v openvpn_conf:/doc/Dockovpn \
 	-p 1194:1194/udp -p 80:8080/tcp \
 	-e HOST_ADDR=localhost \
+	--rm \
+	${DOCKER_REPO}:local
+
+run-officemx:
+	docker run --cap-add=NET_ADMIN --cap-add=MKNOD \
+	-v openvpn_conf:/doc/Dockovpn \
+	-p 1194:1194/udp -p 80:8080/tcp \
+	-e HOST_ADDR=localhost \
+	-e NET_ADAPTER=eth1
 	--rm \
 	${DOCKER_REPO}:local
