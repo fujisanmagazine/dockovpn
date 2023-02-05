@@ -19,7 +19,7 @@ COPY scripts .
 COPY config ./config
 COPY VERSION ./config
 
-RUN apt-get update && apt-get -y install openvpn easy-rsa bash netcat-openbsd zip dumb-init wget && \
+RUN apt-get update && apt-get -y install openvpn easy-rsa bash netcat-openbsd zip dumb-init iptables wget openssh-client iputils-ping traceroute && \
     ln -s /usr/share/easy-rsa/easyrsa /usr/bin/easyrsa && \
     mkdir -p ${APP_PERSIST_DIR} && \
     cd ${APP_PERSIST_DIR} && \
