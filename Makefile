@@ -1,7 +1,7 @@
 export FULL_VERSION_RELEASE="$$(cat ./VERSION)"
 export FULL_VERSION="$$(cat ./VERSION)-regen-dh"
 export TESTS_FOLDER=$$(TEMP_VAR=$${TESTS_REPORT:-$${PWD}/target/test-reports}; echo $${TEMP_VAR})
-export DOCKER_REPO="alekslitvinenk/openvpn"
+export DOCKER_REPO="fujisanmagazine/dockovpn"
 export CBRANCH=$$(git rev-parse --abbrev-ref HEAD | tr / -)
 
 .PHONY: build build-release build-local build-dev build-test build-branch install clean test test-branch run
@@ -84,9 +84,20 @@ test-branch:
 	alekslitvinenk/dockovpn-it:1.0.0 test
 
 run:
-	docker run --cap-add=NET_ADMIN \
-	-v openvpn_conf:/opt/Dockovpn_data \
+	echo HOST_ADDR=$(curl -s https://api.ipify.org) > .env \
+		&& docker compose up -d \
+		&& docker compose exec -d dockovpn wget -O /doc/Dockovpn/client.ovpn localhost:8080
+#	docker run --cap-add=NET_ADMIN \
+#	-v openvpn_conf:/opt/Dockovpn_data \
+#	-p 1194:1194/udp -p 80:8080/tcp \
+#	-e HOST_ADDR=localhost \
+#	--rm \
+#	${DOCKER_REPO}
+
+run-local:
+	docker run --cap-add=NET_ADMIN --cap-add=MKNOD \
+	-v openvpn_conf:/doc/Dockovpn \
 	-p 1194:1194/udp -p 80:8080/tcp \
 	-e HOST_ADDR=localhost \
 	--rm \
-	${DOCKER_REPO}
+	${DOCKER_REPO}:local
